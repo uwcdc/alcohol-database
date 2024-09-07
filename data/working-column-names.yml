@@ -1,0 +1,175 @@
+product:
+  attr:
+    record_id:
+      type: UUID # auto-generated
+    product_name:
+      type: varchar(100)
+spirits_database:
+  type: varchar(6)
+  attrs:
+    - beer
+    - liquor
+    - wine
+nacs_major_category:
+  type: varchar(100)
+nacs_minor_category:
+  type: varchar(100)
+  attrs: []
+sr28_ndb: # Standard Reference 28 Nutrient Database (Legacy)
+  type: varchar(100)
+  attrs: []
+manufacturer:
+  type: varchar(100)
+  attrs:
+    name:
+      type: varchar(100)
+    brand_line:
+      type: varchar(100) # Foreign Key
+
+- MT_PLU_Sub_Set
+- Check
+- Status
+- Date
+- MT
+- PLU
+- UPC_E
+- UPC_A
+- Vintage_Key
+- Vintage
+- Manufacturer
+- Brand_Line
+- Name
+- Varietal
+- Description_Note
+- POS_Name
+- Container
+- Size
+- UOM
+- I_Size
+- I_UOM
+- Carton_UPC
+- Case_UPC
+- Count
+- Model_MPN_NDC
+- Country
+- State
+- ABV
+- Style
+- IBU
+- Region
+- Appellation
+- Endorsements
+- Prepared_Notes_and_Health_Claims
+- Serving_Size
+- Serving_Size_UOM
+- I_Serving_Size
+- I_Serving_Size_UOM
+- RW_Size
+- RW_UOM
+- Pieces
+- Servings_Per_Container
+- Calories
+- Fat_Calories
+- Total_Fat_G
+- Dvp_Total_Fat
+- Saturated_Fat_G
+- Dvp_Saturated_Fat
+- Trans_Fat_G
+- Dvp_Trans_Fat
+- Polyunsaturated_Fat_G
+- Monounsaturated_Fat_G
+- Cholesterol_MG
+- Dvp_Cholesterol
+- Sodium_MG
+- Dvp_Sodium
+- Potassium_MG
+- Dvp_Potassium
+- Carbohydrates_G
+- Dvp_Carbohydrates
+- Fiber_G
+- Dvp_Dietary_Fiber
+- Sugars_G
+- Dvp_Sugar
+- Added_Sugar
+- Dvp_Added_Sugar
+- Other_Carbohydrates_G
+- Sugar_Alcohols_G
+- Protein_G
+- Dvp_Protein
+- Net_Carbs_G
+- Completed
+- Ingredients
+- Warnings
+- Allergy_Information
+- Milk
+- Egg
+- Peanut
+- Tree Nut
+- Fish
+- Shellfish
+- Soy
+- Wheat
+- CC_Milk
+- CC_Egg
+- CC_Peanut
+- CC_Tree Nut
+- CC_Fish
+- CC_Shellfish
+- CC_Soy
+- CC_Wheat
+- Gluten
+- Yeast
+- Sesame
+- Sulfites
+- Celery
+- Lactose
+- Mustard
+- Dvp_Vitamin_A
+- Dvp_Vitamin_C
+- Calcium_MG
+- Dvp_Calcium
+- Iron_MG
+- Dvp_Iron
+- Vitamin_D_MCG
+- Dvp_Vitamin_D
+- Dvp_Vitamin_E
+- Dvp_Vitamin_K
+- Dvp_Thiamin
+- Dvp_Riboflavin
+- Dvp_Niacin
+- Dvp_Vitamin_B1
+- Dvp_Vitamin_B2
+- Dvp_Vitamin_B6
+- Dvp_Folic_Acid
+- Dvp_Vitamin_B12
+- Dvp_Biotin
+- DVP_Pantothenic_Acid
+- Dvp_Phosphorus
+- Dvp_Iodine
+- Dvp_Magnesium
+- Dvp_Zinc
+- Dvp_Selenium
+- Dvp_Copper
+- Dvp_Manganese
+- Dvp_Chromium
+- Dvp_Molybdenum
+- Dvp_Vitamin_B3
+- Dvp_Vitamin_B5
+- Dvp_Folate
+- Folate_Note
+- Soluble_Fiber
+- Insoluble_Fiber
+- Phosphate
+- Chloride
+- Caffeine_MG
+- Silica
+- pH
+- Bicarbonates
+- Total_Dissolved_Solids
+- Omega_3_MG
+- Dvp_Choline
+- MSRP
+- WW_Points
+- Whole_Grain
+- Natural_Sugar
+- Glycerin_G
