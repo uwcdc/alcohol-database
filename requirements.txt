@@ -1,5 +1,7 @@
-fastapi[standard]
-openpyxl
-pydantic
-sqlalchemy
-sqlmodel
+fastapi[all] # FastAPI and all its dependencies
+openpyxl # For reading Excel files
+passlib[bcrypt] # For hashing passwords
+pyjwt # For JSON Web Tokens
+pydantic # For data validation
+sqlalchemy # For database management
+sqlmodel # For ORM

@@ -1,9 +1,15 @@
 product:
   attr:
     record_id:
-      type: UUID # auto-generated
+      type: UUID # optional; auto-generated
     product_name:
       type: varchar(100)
+    product_description:
+      type: text # Scrape from totalwine.com
+    upc_e:
+      type: varchar(12) # Needs regex validation
+    upc_a:
+      type: varchar(12) # Needs regex validation
 spirits_database:
   type: varchar(6)
   attrs:
