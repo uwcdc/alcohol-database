@@ -1,13 +1,19 @@
 [build-system]
-requires = ["hatchling", "hatch-vcs"]
+requires = ["hatchling", "hatch-requirements-txt", "hatch-vcs"]
 build-backend = "hatchling.build"
 
 [project]
-name = "ssec_project"
-dynamic = ["version"]
-description = "Python project repository template for developing python package."
+name = "upc-database"
+dynamic = [
+        "dependencies",
+        "version"
+]
+description = "Python project repository for generating Postgres database with relationships."
 readme = "README.md"
 requires-python = ">=3.11"
+authors = [
+  { name = "Cordero Core", email = "cdcore@uw.edu" },
+]
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",
@@ -19,8 +25,6 @@ classifiers = [
     "Topic :: Software Development :: Build Tools",
     "Topic :: Software Development :: Libraries :: Python Modules",
 ]
-dependencies = ["requests", "pandas"]
-
 [project.optional-dependencies]
 dev = [
     "pre-commit",
@@ -38,22 +42,28 @@ docs = [
     "jupyter-book",
     "numpydoc",
 ]
-all = ["ssec_project[dev,docs]"]
+all = ["upc_database[dev,docs]"]
 
 [project.license]
 file = "LICENSE"
 
 [project.urls]
-Homepage = "https://github.com/uw-ssec/python-project-template"
-Documentation = "https://ssec-python-project-template.readthedocs.io"
-Repository = "https://github.com/uw-ssec/python-project-template.git"
-Issues = "https://github.com/uw-ssec/python-project-template/issues"
+Homepage = "https://github.com/uwcdc/upc-database"
+Documentation = "https://upc-database.readthedocs.io"
+Repository = "https://github.com/uwcdc/upc-database.git"
+Issues = "https://github.com/uwcdc/upc-database/issues"
+
+[tool.hatch.metadata]
+allow-direct-references = true
+
+[tool.hatch.metadata.hooks.requirements_txt]
+files = ["requirements.txt"]
 
 [tool.hatch.version]
 source = "vcs"
 
 [tool.hatch.build.hooks.vcs]
-version-file = "src/ssec_project/version.py"
+version-file = "src/upc_database/_version.py"
 
 [tool.hatch.version.raw-options]
 local_scheme = "no-local-version"

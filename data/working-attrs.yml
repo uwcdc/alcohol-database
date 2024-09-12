@@ -1,0 +1,333 @@
+products:
+  id: bigserial [pk, incrementing] # auto-generated product ID
+  product_name: varchar(255) [index] # Name of the product
+  db_category_id: serial [fk: db_category.id] # Foreign key to original database table
+  product_category_id: serial [fk: product_category.id] # Foreign
+  product_sub_category_id: serial [fk: product_sub_category.id] # Foreign key to product sub-category table
+  spirit_styles_id: serial [fk: spirit_styles.id] # Foreign key to spirit_styles table
+  nacs_categories_id: serial [fk: nacs_categories.id] # Foreign key to NACS categories table
+  upc_e: bigint [index, not unique] # GTIN-8 for UPC/EAN
+  upc_a: bigint [index, not unique] # GTIN-12 for UPC-A
+  product_description: text # Description of the product
+  description_note: text # Additional description notes
+  count: numeric # Count (e.g., number of items per pack)
+  carton_upc: bigint # Carton UPC
+  case_upc: bigint # Case UPC
+  countries_id: serial [fk: countries.id] # Foreign key to countries table
+  states_id: serial [fk: states.id] # Foreign key to states table
+  regions_id: serial [fk: regions.id] # Foreign key to regions table
+  varietals_id: serial [fk: varietals.id] # Foreign key to varietals table
+  appellations_id: serial [fk: appellations.id] # Foreign key to appellations table
+  vintage_key_id: serial [fk: vintage_key.id] # Foreign key to vintage_key table
+  databases_id: serial [fk: databases.id] # Foreign key to databases table
+  manufacturers_id: serial [fk: manufacturers.id] # Foreign key to manufacturers table
+  brand_lines_id: serial [fk: brand_lines.id] # Foreign key to brand_lines table
+  model_mpn_ndc: int # Model/Manufacturer Part Number/National Drug Code
+  containers_id: serial [fk: containers.id] # Foreign key to containers table
+  warnings: text # Product warnings
+  abv: numeric # Alcohol by Volume (ABV)
+  ibu: numeric # International Bitterness Units (IBU)
+  prepared_notes_and_health_claims: text # Prepared notes and health claims
+  created_at: timestamptz [default: current_timestamp, index] # Timestamp when the product was created
+  updated_at: timestamptz [default: current_timestamp] # Timestamp when the product was updated
+  created_by: serial [fk: users.id] # User who created the product
+  updated_by: serial [fk: users.id] # User who last updated the product
+
+# Partitioned tables
+beer: # Partitioned from products where product_type = "beer"
+  id: bigserial [pk, incrementing] # optional; auto-generated
+  product_id: bigserial # fk: products.id
+
+liquor: # Partitioned from products
+  id: bigserial [pk, incrementing] # optional; auto-generated
+  product_id: bigserial # fk: products.id
+
+wine: # Partitioned from products
+  id: bigserial [pk, incrementing] # optional; auto-generated
+  product_id: bigserial # fk: products.id
+
+# Product categories
+db_category: # Original database information
+  id: serial [pk, incrementing] # Auto-generated ID
+  name: varchar(50) [unique] # Original database name
+
+product_category: # Table to store product categories
+  id: serial [pk, incrementing] # Auto-generated category ID
+  category: varchar(100) [unique] # Product type (e.g., beer, wine, liquor)
+
+product_sub_category: # Table to store product sub-categories
+  id: serial [pk, incrementing] # Auto-generated sub-category ID
+  sub_category: varchar(100) [unique] # Product sub-category (e.g., IPA, Chardonnay, Vodka)
+
+spirit_styles:
+  id: serial [pk, incrementing] # Auto-generated spirit style ID
+  name: varchar(100) [unique] # Spirit style name
+
+nacs_categories: # Table to store NACS categories
+  id: serial [pk, incrementing] # Auto-generated NACS category ID
+  major: varchar(50) [index] # Major category name
+  minor: varchar(50) [unique] # Minor category name
+
+# Join tables: Many-to-many relationships
+product_allergens: # Join table to link products and allergens
+  product_id: bigserial [fk: products.id]
+  allergen_id: serial [fk: allergens.id]
+
+product_ingredients: # Join table to link products and ingredients
+  product_id: bigserial [fk: products.id]
+  ingredient_id: bigserial [fk: ingredients.id]
+
+product_cross_contamination: # Join table to link products to cross-contaminants
+  product_id: bigserial [fk: products.id]
+  cross_contamination_id: serial [fk: cross_contaminants.id]
+
+product_endorsements: # Join table to link products to endorsements
+  product_id: bigserial [fk: products.id]
+  endorsement_id: serial [fk: endorsements.id]
+
+# Product images
+product_images: # Table to store product images
+  id: bigserial [pk, incrementing] # Auto-generated primary key
+  product_id: bigserial [fk: products.id] # Foreign key to products table
+  image_url: text [unique] # URL to image (e.g., S3 bucket)
+  alt_text: varchar(255) # Image alt text
+  caption: text # Image caption
+  primary: boolean # Whether this is the primary image for the product
+  created_at: timestamptz [default: current_timestamp, index] # Timestamp of when the image was created
+  updated_at: timestamptz [default: current_timestamp] # Timestamp of when the image was updated
+  created_by: serial [fk: users.id, index] # User who created the image
+  updated_by: serial [fk: users.id] # User who last updated the image
+
+# Product nutrients and health-related attributes
+allergens: # Table storing types of allergens
+  id: serial [pk, incrementing] # Auto-generated allergen ID
+  name: varchar(50) [unique] # Allergen name (e.g., Milk, Peanuts)
+
+ingredients: # Table to store individual ingredients
+  id: bigserial [pk, incrementing] # Auto-generated ingredient ID
+  contains: text [unique] # Name of the ingredients
+
+cross_contaminants: # Table to store cross-contaminants
+  id: serial [pk, incrementing] # Auto-generated cross-contaminant ID
+  contains: varchar(100) [unique] # Name of the cross-contaminant
+
+# Product servings information
+servings: # Table to store serving information for products
+  id: bigserial [pk, incrementing] # Auto-generated serving ID
+  product_id: bigserial [fk: products.id] # Foreign key to products table
+  servings_per_container: numeric # Number of servings per container
+  calories: numeric # Number of calories
+  size: numeric # Serving size
+  uom_id: serial [fk: unit_of_measure.id] # Foreign key to unit of measure table
+  i_size: numeric # International serving size
+  international_uom_id: serial [fk: international_unit_of_measure.id] # Foreign key to international unit of measure table
+  serving_size: numeric # Serving size
+  serving_size_uom: varchar(25) # Serving size unit of measure
+  i_serving_size: numeric # International serving size
+  i_serving_size_uom_id: serial [fk: international_serving_size_uom.id] # Foreign key to international serving size unit of measure table
+  rw_size: numeric # Retail weight size
+  rw_size_uom_id: serial [fk: retail_weight_uom.id] # Foreign key to retail weight unit of measure table
+  pieces: int # Number of pieces per serving
+
+uom: # Table to store unit of measure information
+  id: serial [pk, incrementing] # Auto-generated unit of measure ID
+  name: varchar(25) [unique] # Unit of measure name
+
+international_uom: # Table to store international unit of measure information
+  id: serial [pk, incrementing] # Auto-generated international unit of measure ID
+  name: varchar(25) [unique] # International unit of measure name
+
+international_serving_size_uom: # Table to store international serving size unit of measure information
+  id: serial [pk, incrementing] # Auto-generated international serving size unit of measure ID
+  name: varchar(25) [unique] # International serving size unit of measure name
+
+retail_weight_uom: # Table to store retail weight unit of measure information
+  id: serial [pk, incrementing] # Auto-generated retail weight unit of measure ID
+  name: varchar(25) [unique] # Retail weight unit of measure name
+
+# [INTERNAL ONLY]: Product quality checks
+quality_check: # Table for product quality checks
+  id: serial [pk, incrementing] # Auto-generated quality check ID
+  product_id: serial [fk: products.id] # Foreign key to products table
+  created_by: serial [fk: users.id] # User who performed the quality check
+  created_at: timestamptz [default: current_timestamp] # Timestamp when the quality check was created
+  check: boolean # Whether the product passed the quality check
+  status_id: serial [fk: status.id] # Foreign key to status table
+  completed: boolean # Whether the quality check is complete
+  notes: text # Additional notes regarding the quality check
+
+status: # Status of the product (active, archived, in-progress, etc.)
+  id: serial [pk, incrementing] # Auto-generated status ID
+  name: varchar(50) # Status name
+
+# Location tables
+countries:
+  id: serial [pk, incrementing] # Auto-generated country ID
+  name: varchar(50) # Country name
+
+states:
+  id: serial [pk, incrementing] # Auto-generated state ID
+  name: varchar(50) # State name
+  countries_id: serial [fk: countries.id] # Foreign key to countries table
+
+regions:
+  id: serial [pk, incrementing] # Auto-generated region ID
+  name: varchar(50) # Region name
+  countries_id: serial [fk: countries.id] # Foreign key to countries table
+
+# Wine-specific tables
+varietals:
+  id: serial [pk, incrementing] # Auto-generated varietal ID
+  name: varchar(50) # Varietal name
+
+appellations:
+  id: serial [pk, incrementing] # Auto-generated appellation ID
+  name: varchar(50) # Appellation name
+
+vintage_key:
+  id: serial [pk, incrementing] # Auto-generated vintage key ID
+  year: int # Vintage year (e.g., 2021); BUT both year and vintage_text_id can't contain values
+  vintage_text_id: serial [fk: vintage_text.id] # Foreign key to vintage_text table
+
+vintage_text:
+  id: serial [pk, incrementing] # Auto-generated vintage text ID
+  text: varchar(25) # Vintage text; Values: "Non-Vintage", "Multi-Vintage", "Undeclared Vintage", "Minor Vintage", "Minor Multi-Vintage"
+
+# Product endorsements
+endorsements:
+  id: serial [pk, incrementing] # Auto-generated endorsement ID
+  name: varchar(100) # Endorsement name
+
+# Manufacturing tables
+manufacturers:
+  id: bigserial [pk, incrementing] # Auto-generated manufacturer ID
+  name: varchar(100) # Manufacturer name
+
+brand_lines:
+  id: bigserial [pk, incrementing] # Auto-generated brand line ID
+  name: varchar(100) # Brand line name
+  manufacturer_id: bigserial [fk: manufacturers.id] # Foreign key to manufacturers table
+
+containers:
+  id: serial [pk, incrementing] # Auto-generated container ID
+  name: varchar(50) # Container type (e.g., "Can", "Bottle")
+
+# Nutrient tables
+other_nutrients: # Table for other product nutrients and health-related attributes
+  id: serial [pk, incrementing] # Auto-generated ID
+  product_id: serial [fk: products.id] # Foreign key to products table
+  phosphate: numeric # Phosphate content (e.g., mg)
+  chloride: numeric # Chloride content (e.g., mg)
+  caffeine_mg: numeric # Caffeine content (mg)
+  silica: numeric # Silica content (mg)
+  ph: numeric # pH value
+  bicarbonates: numeric # Bicarbonate content (mg)
+  total_dissolved_solids: numeric # Total dissolved solids
+  omega_3_mg: numeric # Omega-3 content (mg)
+  dvp_choline: numeric # Daily value percentage for choline
+
+carbs: # Table for carbohydrate content of products
+  id: serial [pk, incrementing] # Auto-generated ID
+  product_id: serial [fk: products.id] # Foreign key to products table
+  carbohydrates_g: numeric # Carbohydrates in Grams
+  fiber_g: numeric # Fiber in Grams
+  sugars_g: numeric # Sugars in Grams
+  added_sugars_g: numeric # Added Sugars in Grams
+  dvp_added_sugars: numeric # Daily Value Percentage Added Sugars
+  other_carbohydrates_g: numeric # Other Carbohydrates in Grams
+  sugars_alcohols_g: numeric # Sugars Alcohols in Grams
+  net_carbohydrates_g: numeric # Net Carbohydrates in Grams
+  folate_note: text # Folate Note
+  soluble_fiber_g: numeric # Soluble Fiber in Grams
+  insoluble_fiber_g: numeric # Insoluble Fiber in Grams
+  whole_grains: numeric # Whole Grains
+  natural_sugar: numeric # Natural Sugar
+  glycerin_g: numeric # Glycerin in Grams
+
+dvp_carbs: # Table for daily value percentages of carbs
+  id: serial [pk, incrementing] # Auto-generated ID
+  product_id: serial [fk: products.id] # Foreign key to products table
+  dvp_carbohydrates: numeric # Daily Value Percentage Carbohydrates
+  dvp_dietary_fiber: numeric # Daily Value Percentage Dietary Fiber
+  dvp_sugars: numeric # Daily Value Percentage Sugars
+  dvp_folate: numeric # Daily Value Percentage Folate
+
+fats: # Table for fat content of products
+  id: serial [pk, incrementing] # optional; auto-generated
+  product_id: bigserial # fk: products.id
+  fat_calories: numeric # Fat Calories
+  total_fat_g: numeric # Total Fat in Grams
+  saturated_fat_g: numeric # Saturated Fat in Grams
+  trans_fat_g: numeric # Trans Fat in Grams
+  polyunsaturated_fat_g: numeric # Polyunsaturated Fat in Grams
+  monounsaturated_fat_g: numeric # Monounsaturated Fat in Grams
+  cholesterol_mg: numeric # Cholesterol in Milligrams
+
+dvp_fats: # Table for daily value percentages of fats
+  id: serial [pk, incrementing] # optional; auto-generated
+  product_id: bigserial # fk: products.id
+  dvp_total_fat: numeric # Daily Value Percentage Total Fat
+  dvp_saturated_fat: numeric # Daily Value Percentage Saturated
+  dvp_trans_fat: numeric # Daily Value Percentage
+  dvp_cholesterol: numeric # Daily Value Percentage Cholesterol
+
+proteins:
+  id: serial [pk, incrementing] # optional; auto-generated
+  product_id: bigserial # fk: products.id
+  protein_g: numeric # Protein in Grams
+
+dvp_proteins:
+  id: serial [pk, incrementing] # optional; auto-generated
+  product_id: bigserial # fk: products.id
+  dvp_protein: numeric # Daily Value Percentage Protein
+
+minerals:
+  id: serial [pk, incrementing] # optional; auto-generated
+  product_id: bigserial # fk: products.id
+  sodium_mg: numeric # Sodium in Milligrams
+  potassium_mg: numeric # Potassium in Milligrams
+  calcium_mg: numeric # Calcium in Milligrams
+  iron_mg: numeric # Iron in Milligrams
+
+dvp_minerals:
+  id: serial [pk, incrementing] # optional; auto-generated
+  product_id: bigserial # fk: products.id
+  dvp_sodium: numeric # Daily Value Percentage Sodium
+  dvp_potassium: numeric # Daily Value Percentage Potassium
+  dvp_calcium: numeric # Daily Value Percentage Calcium
+  dvp_iron: numeric # Daily Value Percentage Iron
+  dvp_phosphorus: numeric # Daily Value Percentage Phosphorus
+  dvp_iodine: numeric # Daily Value Percentage Iodine
+  dvp_magnesium: numeric # Daily Value Percentage Magnesium
+  dvp_zinc: numeric # Daily Value Percentage Zinc
+  dvp_selenium: numeric # Daily Value Percentage Selenium
+  dvp_copper: numeric # Daily Value Percentage Copper
+  dvp_manganese: numeric # Daily Value Percentage Manganese
+  dvp_chromium: numeric # Daily Value Percentage Chromium
+  dvp_molybdenum: numeric # Daily Value Percentage Molybdenum
+
+vitamins:
+  id: serial [pk, incrementing] # optional; auto-generated
+  product_id: bigserial # fk: products.id
+  vitamin_d_mcg: numeric # Vitamin D in Micrograms
+
+dvp_vitamins:
+  id: serial [pk, incrementing] # optional; auto-generated
+  product_id: bigserial # fk: products.id
+  dvp_vitamin_a: numeric # Daily Value Percentage Vitamin A
+  dvp_vitamin_c: numeric # Daily Value Percentage Vitamin C
+  dvp_viitamin_d: numeric # Daily Value Percentage Vitamin D
+  dvp_vitamin_e: numeric # Daily Value Percentage Vitamin E
+  dvp_vitamin_k: numeric # Daily Value Percentage Vitamin K
+  dvp_thiamin: numeric # Daily Value Percentage Thiamin
+  dvp_riboflavin: numeric # Daily Value Percentage Riboflavin
+  dvp_niacin: numeric # Daily Value Percentage Niacin
+  dvp_vitamin_b1: numeric # Daily Value Percentage Vitamin B1
+  dvp_vitamin_b2: numeric # Daily Value Percentage Vitamin B2
+  dvp_vitamin_b6: numeric # Daily Value Percentage Vitamin B6
+  dvp_folic_acid: numeric # Daily Value Percentage Folic Acid
+  dvp_vitamin_b12: numeric # Daily Value Percentage Vitamin B12
+  dvp_biotin: numeric # Daily Value Percentage Biotin
+  dvp_pantothenic_acid: numeric # Daily Value Percentage Pantothenic Acid
+  dvp_vitamin_b3: numeric # Daily Value Percentage Vitamin B3
+  dvp_vitamin_b5: numeric # Daily Value Percentage Vitamin B5
